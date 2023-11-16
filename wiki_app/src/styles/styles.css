@@ -1,0 +1,19 @@
+/* estilo.css */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300&family=Newsreader:ital,opsz,wght@1,6..72,300;1,6..72,400&display=swap');
+
+
+body {
+    font-family: 'Nombre de la fuente', sans-serif;
+}
+
+h1 {
+    font-family: 'Newsreader', serif;
+    font-size: 25px;
+    font-weight: 400;
+    color: #002855;
+}
+
+p {
+    font-family: 'Inter', sans-serif;
+}
