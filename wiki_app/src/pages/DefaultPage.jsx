@@ -85,7 +85,7 @@ function DefaultPage() {
                 <div class="grid grid-cols-3 text-center">
                     <div><h2 className="text-lg"> Palabras comunes</h2></div>
                     <div ></div>
-                    <div><p>¿Pertenece al título?</p></div>
+                    <div><h2 className="text-lg">¿Pertenece al título?</h2></div>
                     <div class="col-span-3"><hr class="border-3" /></div>
                     
                     <div>Palabra</div>
