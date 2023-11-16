@@ -37,7 +37,7 @@ function DefaultPage() {
                         <div className="bg-grisBorde py-4 px-4 shadow sm:rounded-lg sm:px-10 text-center">
 
                         <div className="bg-gris py-2 px-4 shadow sm:rounded-full flex items-center">
-                            <h2 id="etiqueta" className="text-lg flex"> No se si se va a usar foreach </h2>
+                            <h2 id="etiqueta" className="text-lg flex"> No sé si se va a usar foreach </h2>
                             <p id="linkActivos" className="ml-auto">#valor a mostrar</p>
                         </div><br/>
                         
