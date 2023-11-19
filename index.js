@@ -8,10 +8,11 @@ const port = 3001; // or any port of your choice
 
 // Create a MySQL connection
 const db = mysql.createConnection({
-    host: 'localhost:3306',
+    host: 'localhost',
     user: 'root',
     password: '1234',
     database: 'wiki',
+    port: 3307
 });
 
 // Connect to MySQL
