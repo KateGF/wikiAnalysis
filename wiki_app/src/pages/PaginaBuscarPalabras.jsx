@@ -1,111 +1,128 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import "../styles/styles.css";
-import "bootstrap/dist/css/bootstrap.css";
-import { Player } from '@lottiefiles/react-lottie-player';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from 'axios';
 
 function PaginaBuscarPalabras() {
-    
     const navigate = useNavigate();
-
-    const handleClick = () => {
-        navigate("/");
-    };
+    const [searchKeyword, setSearchKeyword] = useState('');
+    const [searchResults, setSearchResults] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState(null);
 
     const handleDefault = () => {
         navigate("/defaultPage");
     };
 
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setIsLoading(true);
+        setError(null);
+
+        try {
+            const response = await axios.get(`http://localhost:3000/search/titles/${searchKeyword}`);
+            setSearchResults(response.data);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            setError('Error fetching data. Please try again.');
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    function formatSubtitles(subtitles) {
+        const subtitlesArray = JSON.parse(subtitles);
+        // Check if subtitles is an array
+        if (Array.isArray(subtitlesArray)) {
+            return subtitlesArray.map((subtitle, index) => (
+                <span key={index} className="bg-blue-100 text-blue-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">{subtitle}</span>
+            ));
+        }
+    }
+
+    function formatImages(images) {
+        const imagesArray = JSON.parse(images);
+        // Check if subtitles is an array
+        if (Array.isArray(imagesArray)) {
+            return imagesArray.map((image, index) => (
+                <img key={index} src={image.src} alt={image.alt} />
+            ));
+        }
+    }
+
+    function trimContent(content) {
+        const maxLength = 100; // Set your desired maximum length
+        return content.length > maxLength ? `${content.substr(0, maxLength)}...` : content;
+    }
+
+    useEffect(() => {
+        // You can add additional logic or use another useEffect for other searches (subtitles, content, etc.)
+    }, [searchResults]); // Add dependencies if needed
+
     return (
-        <div class="grid grid-cols-3 gap-4 px-16 py-10 justify-center">
-            <div class=" col-span-3 justify-end"><h1 className="text-2xl text-blue">Wikipedia Analysis</h1></div>
-            <div class="">
+        <div className="grid grid-cols-4 gap-4 px-16 py-10 justify-center">
+            <header className="col-span-3 justify-end">
+                <h1 className="text-2xl text-blue">Wikipedia Analysis</h1>
                 <button
                     onClick={handleDefault}
-                    className="group relative w-full h-[40px] flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-grisMed hover:bg-blue">
+                    className="group relative  h-[40px] flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-grisMed hover:bg-blue">
                     Volver
                 </button>
-            </div>
-            <div class="col-span-4">
-              
-            
-<form>
-    <div class="flex">
-    
-        <div class="relative w-full">
-            <input type="search" id="search" class="block p-2.5 w-full z-20 text-sm text-gray-600 bg-gray-50 rounded-lg border-s-gray-50 border-3 border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-transparent dark:border-s-gray-700  dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:border-blue-500" 
-            placeholder="Búsqueda de palabras por página" required/>
-            <button type="submit" class="absolute top-0 end-0 p-2.5 text-sm font-medium h-full text-grisMed bg-blue-600 rounded-lg border-3 border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
-                </svg>
-                <span class="sr-only">Buscar</span>
-            </button>
-        </div>
-    </div>
-</form>
+            </header>
 
+            <div className="col-span-2">
 
-
-
-                <div class="col"><hr class="border-3" /></div>
-            </div>
-
-            <div class="col-span-2">
-                <div className="text-center">
-                    <div className="w-full">
-                        <div className="bg-grisBorde py-4 px-4 shadow sm:rounded-lg sm:px-10 text-center">
-
-                        <div className="bg-gris py-2 px-4 shadow sm:rounded-full flex items-center">
-                            <h2 id="etiqueta" className="text-lg flex"> No sé si se va a usar foreach </h2>
-                            <p id="linkActivos" className="ml-auto">#valor a mostrar</p>
-                        </div><br/>
-                        
-                        <div className="bg-gris py-2 px-4 shadow sm:rounded-full flex items-center">
-                            <h2 id="etiqueta" className="text-lg flex"> Páginas </h2>
-                            <p id="paginas" className="ml-auto">#paginas</p>
-                        </div><br/>
-
-                        <div className="bg-gris py-2 px-4 shadow sm:rounded-full flex items-center">
-                            <h2 id="etiqueta" className="text-lg flex"> Cantidad </h2>
-                            <p id="cantidad" className="ml-auto">#cantidad</p>
-                        </div><br/>
-
-                        <div className="bg-gris py-2 px-4 shadow sm:rounded-full flex items-center">
-                            <h2 id="etiqueta" className="text-lg flex"> Porcentaje </h2>
-                            <p id="porcentaje" className="ml-auto">#porcentaje</p>
-                        </div><br/>
-                        
+                <form onSubmit={handleSubmit}>
+                    <div className="flex">
+                        <div className="relative w-full">
+                            <input
+                                type="search"
+                                id="search"
+                                value={searchKeyword}
+                                onChange={(e) => setSearchKeyword(e.target.value)}
+                                className="..."
+                                placeholder="Búsqueda de palabras por página"
+                                required
+                            />
+                            <button
+                                type="submit"
+                                className="..."
+                            >
+                                <svg
+                                    className="w-4 h-4"
+                                    aria-hidden="true"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 20 20"
+                                >
+                                    <path
+                                        stroke="currentColor"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth="2"
+                                        d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+                                    />
+                                </svg>
+                                <span className="sr-only">Buscar</span>
+                            </button>
                         </div>
                     </div>
+                </form>
+                <hr className="border-3" />
+                <div className="text-center">
+                    {isLoading && <p>Loading...</p>}
+                    {error && <p>Error: {error}</p>}
+                    {searchResults.map((result) => (
+                        <div id={result.id} key={result.id}>
+                            <h2>{result.title}</h2>
+                            {formatSubtitles(result.subtitles)}
+                            <h2>Images</h2>
+                            {formatImages(result.images)}
+                        </div>
+                    ))}
                 </div>
             </div>
 
-            <div class="col-span-2 bg-grisBorde py-4 px-4 shadow sm:rounded-lg sm:px-10 text-center">
-                <div class="grid grid-cols-3 text-center">
-                    <div><h2 className="text-lg"> Tags</h2></div>
-                    <div ></div>
-                    <div><h2 className="text-lg">Porcentaje</h2></div>
-                    <div class="col-span-3"><hr class="border-3" /></div>
-                    
-                    <div>Palabra</div>
-                    <div>hacer for each</div>
-                    <div>%%%</div>
-
-                    <div>------------</div>
-                    <div></div>
-                    <div>------------</div>
-
-                    <div>------------</div>
-                    <div></div>
-                    <div>------------</div>
-                    
-                </div>
-            </div>
-            <div class="col-span-3"></div>
-            <div class=""></div>
         </div>
-
     );
 }
 
