@@ -42,7 +42,7 @@ const executeQuery = (connection, query, values) => {
         });
     });
 };
-
+// SELECT * FROM wikipediacrawler.documentos WHERE title LIKE ?'
 app.get('/search/titles/:keyword', async (req, res) => {
     try {
         const keyword = req.params.keyword;
@@ -51,31 +51,28 @@ app.get('/search/titles/:keyword', async (req, res) => {
             return res.status(400).json({ error: 'Bad Request', message: 'Please provide a valid search keyword' });
         }
 
-        const query = 'SELECT * FROM wikipediacrawler.documentos WHERE title LIKE ?';
+        const query = 'SELECT * FROM wikipediacrawler.documentos WHERE title= ?';
         const connection = await connectDB();
 
         try {
-            const rows = await executeQuery(connection, query, [`%${keyword}%`]);
+            const rows = await executeQuery(connection, query, [keyword]);
 
-            // Log the executed SQL query
-            console.log('Executed SQL Query:', connection.format(query, [`%${keyword}%`]));
+            console.log('Executed SQL Query:', connection.format(query, [keyword]));
 
-            // Check if rows is defined and has a length property
-            if (rows === undefined) {
-                console.error('Query returned undefined rows');
-            }
-
-            if (rows && rows.length === 0) {
-                console.log('No documents found with the given title keyword');
-                return res.status(404).json({ message: 'No documents found with the given title keyword' });
+            if (!rows || rows.length === 0) {
+                console.log('No documents found with the given keyword');
+                return res.status(404).json({ message: 'No documents found with the given keyword' });
             }
 
             res.json(rows);
+        } catch (error) {
+            console.error('Error executing SQL query:', error);
+            return res.status(500).json({ error: 'Internal Server Error', message: 'Error executing SQL query' });
         } finally {
             connection.release();
         }
     } catch (error) {
-        console.error('Error in /search/titles:', error);
+        console.error('Error in /search/word:', error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
@@ -150,6 +147,39 @@ app.get('/search/word/:keyword', async (req, res) => {
     }
 });
 
+app.get('/search/hadoop/:keyword', async (req, res) => {
+    try {
+        const keyword = req.params.keyword;
+
+        if (!keyword) {
+            return res.status(400).json({ error: 'Bad Request', message: 'Please provide a valid search keyword' });
+        }
+
+        const query = 'SELECT * FROM wikipediacrawler.respuesta_preguntas WHERE titulo = ?';
+        const connection = await connectDB();
+
+        try {
+            const rows = await executeQuery(connection, query, [keyword]);
+
+            console.log('Executed SQL Query:', connection.format(query, [keyword]));
+
+            if (!rows || rows.length === 0) {
+                console.log('No documents found with the given keyword');
+                return res.status(404).json({ message: 'No documents found with the given keyword' });
+            }
+
+            res.json(rows);
+        } catch (error) {
+            console.error('Error executing SQL query:', error);
+            return res.status(500).json({ error: 'Internal Server Error', message: 'Error executing SQL query' });
+        } finally {
+            connection.release();
+        }
+    } catch (error) {
+        console.error('Error in /search/word:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
 
 // Start the server
 app.listen(port, () => {

@@ -6,6 +6,7 @@ function PaginaBuscarPalabras() {
     const navigate = useNavigate();
     const [searchKeyword, setSearchKeyword] = useState('');
     const [searchResults, setSearchResults] = useState([]);
+    const [additionalInfo, setAdditionalInfo] = useState({});
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
 
@@ -19,8 +20,15 @@ function PaginaBuscarPalabras() {
         setError(null);
 
         try {
-            const response = await axios.get(`http://localhost:3000/search/titles/${searchKeyword}`);
+            // Make the first request to get search results and additional information
+            const [response, additionalResponse] = await Promise.all([
+                axios.get(`http://localhost:3000/search/titles/${searchKeyword}`),
+                axios.get(`http://localhost:3000/search/hadoop/${searchKeyword}`)
+            ]);
+
             setSearchResults(response.data);
+            setAdditionalInfo(additionalResponse.data);
+
         } catch (error) {
             console.error('Error fetching data:', error);
             setError('Error fetching data. Please try again.');
@@ -41,7 +49,7 @@ function PaginaBuscarPalabras() {
 
     function formatImages(images) {
         const imagesArray = JSON.parse(images);
-        // Check if subtitles is an array
+        // Check if images is an array
         if (Array.isArray(imagesArray)) {
             return imagesArray.map((image, index) => (
                 <img key={index} src={image.src} alt={image.alt} />
@@ -49,14 +57,9 @@ function PaginaBuscarPalabras() {
         }
     }
 
-    function trimContent(content) {
-        const maxLength = 100; // Set your desired maximum length
-        return content.length > maxLength ? `${content.substr(0, maxLength)}...` : content;
-    }
-
     useEffect(() => {
         // You can add additional logic or use another useEffect for other searches (subtitles, content, etc.)
-    }, [searchResults]); // Add dependencies if needed
+    }, [searchResults, additionalInfo]); // Add dependencies if needed
 
     return (
         <div className="grid grid-cols-4 gap-4 px-16 py-10 justify-center">
@@ -64,13 +67,13 @@ function PaginaBuscarPalabras() {
                 <h1 className="text-2xl text-blue">Wikipedia Analysis</h1>
                 <button
                     onClick={handleDefault}
-                    className="group relative  h-[40px] flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-grisMed hover:bg-blue">
+                    className="group relative h-[40px] flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-grisMed hover:bg-blue"
+                >
                     Volver
                 </button>
             </header>
 
             <div className="col-span-2">
-
                 <form onSubmit={handleSubmit}>
                     <div className="flex">
                         <div className="relative w-full">
@@ -111,17 +114,38 @@ function PaginaBuscarPalabras() {
                 <div className="text-center">
                     {isLoading && <p>Loading...</p>}
                     {error && <p>Error: {error}</p>}
-                    {searchResults.map((result) => (
-                        <div id={result.id} key={result.id}>
-                            <h2>{result.title}</h2>
-                            {formatSubtitles(result.subtitles)}
+                    {searchResults.length > 0 && (
+                        <div id={searchResults[0].id} key={searchResults[0].id}>
+                            <h2>{searchResults[0].title}</h2>
+                            {formatSubtitles(searchResults[0].subtitles)}
                             <h2>Images</h2>
-                            {formatImages(result.images)}
+                            {formatImages(searchResults[0].images)}
+                            {/* Render additional information from the second request */}
+                            {additionalInfo && (
+                                <div>
+                                    <h2>Additional Information</h2>
+                                    {Object.entries(additionalInfo).map(([key, value]) => (
+                                        <div key={key} className="mb-4">
+                                            <h3 className="text-lg font-bold mb-2">{key}</h3>
+                                            {typeof value === 'object' ? (
+                                                // If the value is an object, convert it to an array and render
+                                                Object.entries(value).map(([subKey, subValue]) => (
+                                                    <p key={subKey} className="mb-1">
+                                                        <strong>{subKey}:</strong> {subValue}
+                                                    </p>
+                                                ))
+                                            ) : (
+                                                // If the value is not an object, render it directly
+                                                <p>{value}</p>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
                         </div>
-                    ))}
+                    )}
                 </div>
             </div>
-
         </div>
     );
 }
