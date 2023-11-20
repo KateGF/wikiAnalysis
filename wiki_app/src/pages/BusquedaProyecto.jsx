@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
+import { hadoopResults } from "../static/data";
+import Hadoop from "./Hadoop";
 
 function BusquedaProyecto() {
     const navigate = useNavigate();
@@ -161,6 +163,15 @@ function BusquedaProyecto() {
                         </div>
                     ))}
                 </div>
+            </div>
+            <div className="col-span-2">
+                {hadoopResults.map((hadoop) => (
+                    <div>
+                        <Hadoop logData={hadoop}></Hadoop>
+                        <hr></hr>
+                    </div>
+                ))}
+
             </div>
         </div>
     );
