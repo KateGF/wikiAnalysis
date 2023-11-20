@@ -7,10 +7,10 @@ const port = 3000;
 
 // Replace these credentials with your MySQL connection details
 const pool = mysql.createPool({
-    host: 'localhost',
+    host: '127.0.0.1',
     user: 'root',
-    password: '1234',
-    port: 3307,
+    password: '12345',
+    port: 8080,
     connectionLimit: 5,
 });
 app.use(cors());
@@ -111,6 +111,41 @@ app.get('/search/subtitles/:keyword', async (req, res) => {
         }
     } catch (error) {
         console.error('Error in /search/subtitles:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+
+app.get('/search/word/:keyword', async (req, res) => {
+    try {
+        const keyword = req.params.keyword;
+
+        if (!keyword) {
+            return res.status(400).json({ error: 'Bad Request', message: 'Please provide a valid search keyword' });
+        }
+
+        const query = 'SELECT * FROM wikipediacrawler.respuesta_palabras WHERE palabra = ?';
+        const connection = await connectDB();
+
+        try {
+            const rows = await executeQuery(connection, query, [keyword]);
+
+            console.log('Executed SQL Query:', connection.format(query, [keyword]));
+
+            if (!rows || rows.length === 0) {
+                console.log('No documents found with the given keyword');
+                return res.status(404).json({ message: 'No documents found with the given keyword' });
+            }
+
+            res.json(rows);
+        } catch (error) {
+            console.error('Error executing SQL query:', error);
+            return res.status(500).json({ error: 'Internal Server Error', message: 'Error executing SQL query' });
+        } finally {
+            connection.release();
+        }
+    } catch (error) {
+        console.error('Error in /search/word:', error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });

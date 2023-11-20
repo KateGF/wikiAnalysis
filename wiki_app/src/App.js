@@ -2,7 +2,7 @@ import React from 'react';
 import { useEffect, useState } from "react";
 import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import {Bienvenida, BuscarPalabras, DefaultPage} from "./Routes.js"
+import {Bienvenida, BuscarPalabras, DefaultPage, BusquedaProyecto} from "./Routes.js"
 
 
 const App = () => {
@@ -12,6 +12,7 @@ const App = () => {
         <Route path="/" element={<Bienvenida />} />
         <Route path="/defaultPage" element={<DefaultPage />} />
         <Route path="/buscarPalabras" element={<BuscarPalabras />} />
+        <Route path="/busquedaProyecto" element={<BusquedaProyecto />} />
       </Routes>
     </BrowserRouter>
   )

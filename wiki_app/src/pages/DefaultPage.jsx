@@ -15,6 +15,9 @@ function DefaultPage() {
     const handleBuscarPalabras = () => {
         navigate("/buscarPalabras");
     };
+    const handleBuscarProyecto = () => {
+        navigate("/busquedaProyecto");
+    };
 
     return (
         <div class="grid grid-cols-3 gap-4 px-16 py-10 justify-center">
@@ -23,7 +26,12 @@ function DefaultPage() {
                 <button
                     onClick={handleBuscarPalabras}
                     className="group relative w-full h-[40px] flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-grisMed hover:bg-blue">
-                    Búsqueda palabras
+                    Búsqueda documento
+                </button>
+                <button
+                    onClick={handleBuscarProyecto}
+                    className="group relative w-full h-[40px] flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-grisMed hover:bg-blue">
+                    Búsqueda palabra
                 </button>
             </div>
             <div class="col-span-4">
