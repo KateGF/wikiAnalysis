@@ -88,7 +88,17 @@ function BusquedaProyecto() {
     useEffect(() => {
         // You can add additional logic or use another useEffect for other searches (subtitles, content, etc.)
     }, [searchResults]); // Add dependencies if needed
+    const [expandedJobs, setExpandedJobs] = useState([]);
 
+    const toggle = (jobNumber) => {
+        setExpandedJobs((prevExpandedJobs) => {
+            if (prevExpandedJobs.includes(jobNumber)) {
+                return prevExpandedJobs.filter((job) => job !== jobNumber);
+            } else {
+                return [...prevExpandedJobs, jobNumber];
+            }
+        });
+    };
     return (
         <div className="grid grid-cols-4 gap-4 px-16 py-10 justify-center">
             <header className="col-span-3 justify-end">
@@ -166,15 +176,21 @@ function BusquedaProyecto() {
             </div>
             <div className="col-span-2">
                 {hadoopResults.map((hadoop) => (
-                    <div>
-                        <Hadoop logData={hadoop}></Hadoop>
-                        <hr></hr>
+                    <div key={hadoop.job_number}>
+                        <a className="group relative w-full h-[40px] flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-grisMed hover:bg-blue cursor-pointer" onClick={() => toggle(hadoop.job_number)}>
+                            Job # {hadoop.job_number}
+                        </a>
+                        {expandedJobs.includes(hadoop.job_number) && (
+                            <div id={hadoop.job_number}>
+                                <Hadoop logData={hadoop}></Hadoop>
+                                <hr />
+                            </div>
+                        )}
                     </div>
                 ))}
-
             </div>
         </div>
-    );
+    )
 }
 
 export default BusquedaProyecto;

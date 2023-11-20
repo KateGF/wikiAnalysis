@@ -651,6 +651,7 @@ export const footerSupportLinks = [
 
 export const hadoopResults = [
   {
+    "job_number": 7,
     "job_info": {
       "timestamp": "2023-11-18 17:02:38,945",
       "level": "INFO",
@@ -734,6 +735,7 @@ export const hadoopResults = [
     }
   },
   {
+    "job_number": 6,
     "job_info": {
       "timestamp": "2023-11-18 17:10:53,302",
       "level": "INFO",
@@ -815,6 +817,7 @@ export const hadoopResults = [
     }
   },
   {
+    "job_number": 4,
     "job_info": {
       "timestamp": "2023-11-18 17:16:56,205",
       "level": "INFO",
@@ -886,6 +889,7 @@ export const hadoopResults = [
     }
   },
   {
+    "job_number": 2,
     "job_info": {
       "timestamp": "2023-11-18 17:25:44,328",
       "level": "INFO",
@@ -921,6 +925,7 @@ export const hadoopResults = [
     }
   },
   {
+    "job_number": 1,
     "job_info": {
       "timestamp": "2023-11-18 17:31:15,523",
       "level": "INFO",
